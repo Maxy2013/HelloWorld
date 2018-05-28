@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.springboot.module.mapper.TestMapper">
+    <insert id="insertData">
+        INSERT INTO C_USER VALUES (222, '小花', 344)
+    </insert>
+
+</mapper>
