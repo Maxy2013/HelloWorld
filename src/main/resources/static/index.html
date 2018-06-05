@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>index</title>
+    <script type="application/javascript" src="jquery-1.10.2.min.js"></script>
+    <script type="application/javascript">
+        function request() {
+            $.ajax({
+                url: "/pay/getPayInfo",
+                dataType: 'json',
+                type: 'post',
+                data:{
+                    "id": "--1",
+                    "name": "刘小能"
+                },
+                success: function (data) {
+                    var content = "";
+                    var payment = data.orderInfo;
+                    for (i in payment){
+                        content += "<tr><td>"+payment[i].userId+"</td><td>"+payment[i].orderNo+"</td><td>"+payment[i].status+"</td><td>"+payment[i].type+"</td><td>"+payment[i].paymentMoney+"</td></tr>"
+                    }
+                    $("#content").html(content);
+                }
+            });
+        }
+        function queryDatabase() {
+            $.ajax({
+                url: "/pay/queryDatabase",
+                dataType: "json",
+                type: "post",
+                data: {},
+                success: function (data) {
+                    alert(data.length);
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+    <h1 style="color: darkred;">13456579</h1>
+    <button onclick="request();">请求</button>
+    <table>
+        <thead>
+            <tr>
+                <td>用户</td>
+                <td>订单号</td>
+                <td>状态</td>
+                <td>类型</td>
+                <td>金额</td>
+            </tr>
+        </thead>
+        <tbody id="content">
+
+        </tbody>
+    </table>
+    <button onclick="queryDatabase();">查询数据库</button>
+
+</body>
+</html>
