@@ -2,8 +2,24 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.spring.springboot.module.mapper.PayMapper">
-    <select id="queryDatabase" resultType="com.spring.springboot.module.model.UserInfo">
+    <select id="queryDatabase" parameterType="com.spring.springboot.module.model.dto.PayQueryData" resultType="com.spring.springboot.module.model.UserInfo">
         select * from user_info
+        <where>
+            <if test="id != null and id != ''" >
+                id = #{id, jdbcType=VARCHAR}
+            </if>
+        </where>
+        limit #{start}, #{limit}
+
+    </select>
+
+    <select id="queryTotal" parameterType="com.spring.springboot.module.model.dto.PayQueryData" resultType="java.lang.Integer">
+        select count(*) from user_info
+        <where>
+            <if test="id != null and id != ''" >
+                id = #{id, jdbcType=VARCHAR}
+            </if>
+        </where>
     </select>
 
 </mapper>

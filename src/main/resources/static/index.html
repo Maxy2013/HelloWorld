@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>index</title>
+    <link rel="stylesheet" href="./plugin/layui/css/layui.css"/>
+    <script type="application/javascript" src="plugin/layui/layui.js"></script>
     <script type="application/javascript" src="jquery-1.10.2.min.js"></script>
     <script type="application/javascript">
         function request() {
@@ -24,14 +26,31 @@
                 }
             });
         }
-        function queryDatabase() {
+        function selectDatabase() {
+
+            //在这里触发点击事件，同时获取到输入的值
+            var id = $("#id").val();
+
             $.ajax({
-                url: "/pay/queryDatabase",
+                url: "/pay/selectDatabase",
                 dataType: "json",
                 type: "post",
-                data: {},
+                data: {
+                    "id": id
+                },
                 success: function (data) {
-                    alert(data.length);
+                   // alert(data.length);
+                    if (data.length!=0) {
+                        var contents = "";
+                        var payments = data;//返回的data是个集合，只需要对它进行遍历即可
+                        for (i in payments) {
+                            contents += "<tr><td>" + payments[i].id + "</td><td>" + payments[i].name + "</td><td>" + payments[i].age + "</td><td>" + payments[i].sex + "</td></tr>"
+                        }
+                        $("#contents").html(contents);
+                    }else{
+                        $("#contents").html("");//先清空后提示
+                        alert("未查询到相关数据信息");
+                    }
                 }
             });
         }
@@ -54,7 +73,106 @@
 
         </tbody>
     </table>
-    <button onclick="queryDatabase();">查询数据库</button>
 
+    <input placeholder="请输入id进行查询" id="id">
+    <!-- 就在原来的基础上进行改造，不用新建 -->
+    <button onclick="selectDatabase();">查询数据库</button>
+    <table>
+        <thead>
+            <tr>
+                <td>id</td>
+                <td>姓名</td>
+                <td>年龄</td>
+                <td>性别</td>
+            </tr>
+        </thead>
+        <tbody id="contents">
+
+        </tbody>
+    </table>
+    <input placeholder="请输入id进行查询" id="userId">
+    <button onclick="layUiQuery();">LayUI查询</button>
+    <button id="userReload" class="layui-btn" data-type="reload">LayUI的reload</button>
+
+    <table id="dataTable" lay-filter="test"></table>
+    <script type="application/javascript">
+        layui.use('table', function () {
+            var table = layui.table;
+            //渲染
+            table.render({
+                id: 'userList',
+                elem: '#dataTable',
+                method: 'post',
+                height: 300,
+                url: '/pay/queryDatabase',
+                //开启分页
+                page: true,
+                where: {
+                },
+                response: { //定义后端json格式，详细参见官方文档
+                    code: 0,
+                    msg: "",
+                    count: 1000,
+                    data: []
+                },
+                cols: [[
+                    {field: 'id', title: 'ID', width: 100, sort: true, fixed: 'left'},
+                    {field: 'name', title: '姓名', width: 100, sort: true},
+                    {field: 'sex', title: '性别', width: 100, sort: true},
+                    {field: 'age', title: '年龄', width: 100, sort: true}
+                ]]
+            });
+            var $ = layui.$, active={
+                reload: function () {
+                    var userId = $("#userId").val();
+                    //执行重载
+                    table.reload('userList',{
+                        page: {
+                            curr: 1//重新从第一页开始
+                        },
+                        where: {
+                            id: userId
+                        }
+                    });
+                }
+            }
+            $("#userReload").on('click', function () {
+                var type = $(this).data('type');
+                active[type] ? active[type].call(this) : '';
+            });
+        });
+
+
+        
+        function layUiQuery() {
+            var id = $("#userId").val();
+            layui.use('table', function () {
+                var table = layui.table;
+                //渲染
+                table.render({
+                    elem: '#dataTable',
+                    height: 300,
+                    url: '/pay/queryDatabase',
+                    //开启分页
+                    page: true,
+                    where: {
+                        id: id
+                    },
+                    response: { //定义后端json格式，详细参见官方文档
+                        code: 0,
+                        msg: "",
+                        count: 1000,
+                        data: []
+                    },
+                    cols: [[
+                        {field: 'id', title: 'ID', width: 100, sort: true, fixed: 'left'},
+                        {field: 'name', title: '姓名', width: 100, sort: true},
+                        {field: 'sex', title: '性别', width: 100, sort: true},
+                        {field: 'age', title: '年龄', width: 100, sort: true}
+                    ]]
+                });
+            });
+        }
+    </script>
 </body>
 </html>
